@@ -33,6 +33,7 @@ export interface GestureHand {
   confidence: number;
   landmarks: GestureLandmark[];
   totalLandmarks: number;
+  gesture?: string; // Optional gesture property for ML model results
 }
 
 export interface GestureDetectionResponse {

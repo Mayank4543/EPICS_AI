@@ -270,54 +270,66 @@ function App() {
               </p>
             </div>
             
-            {/* Main Content Layout - Better Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            {/* Main Content Layout - Improved Camera Focus */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Camera Feed - Takes 2/3 width on large screens */}
-              <div className="xl:col-span-3">
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                  {/* Camera Header - Simplified */}
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-100">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">Live Camera Feed</h3>
-                          <p className="text-sm text-gray-600">Real-time gesture recognition</p>
-                        </div>
-                      </div>
-                      
-                      {/* Simplified ML Toggle */}
-                      {datasetInfo?.modelExists && (
-                        <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-sm">
-                          <span className="text-sm font-medium text-gray-700">AI Mode</span>
-                          <button
-                            onClick={() => setUseMLModel(!useMLModel)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              useMLModel ? 'bg-green-500' : 'bg-gray-300'
+              <div className="lg:col-span-2">
+                <div className="relative bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                  {/* Status Badge and AI Toggle - Top Right */}
+                  <div className="absolute top-4 right-4 z-20 flex items-center space-x-3">
+                    {/* Backend Status */}
+                    <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm border ${
+                      /* We'll get this from CameraFeed component status */
+                      'bg-green-100/90 text-green-800 border-green-200'
+                    }`}>
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>Backend Connected</span>
+                    </div>
+
+                    {/* AI Mode Toggle */}
+                    {datasetInfo?.modelExists && (
+                      <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-gray-200 shadow-sm">
+                        <span className="text-xs font-medium text-gray-700">AI Mode</span>
+                        <button
+                          onClick={() => setUseMLModel(!useMLModel)}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                            useMLModel 
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 focus:ring-blue-500' 
+                              : 'bg-gray-300 focus:ring-gray-300'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                              useMLModel ? 'translate-x-5' : 'translate-x-1'
                             }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                useMLModel ? 'translate-x-6' : 'translate-x-1'
-                              }`}
-                            />
-                          </button>
-                          <span className={`text-xs font-medium ${
-                            useMLModel ? 'text-green-600' : 'text-gray-500'
-                          }`}>
-                            {useMLModel ? 'ON' : 'OFF'}
-                          </span>
-                        </div>
-                      )}
+                          />
+                        </button>
+                        <span className={`text-xs font-medium ${
+                          useMLModel ? 'text-blue-600' : 'text-gray-500'
+                        }`}>
+                          {useMLModel ? 'ON' : 'OFF'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Camera Header */}
+                  <div className="bg-gradient-to-r from-gray-50 to-blue-50/30 px-8 py-6 border-b border-gray-100">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900">Live Camera Feed</h3>
+                        <p className="text-gray-600">Real-time gesture recognition powered by AI</p>
+                      </div>
                     </div>
                   </div>
                   
                   {/* Camera Feed Content */}
-                  <div className="p-6">
+                  <div className="p-8">
                     <CameraFeed 
                       onGestureDetected={handleGestureDetected}
                       useMLModel={useMLModel && datasetInfo?.modelExists}
@@ -327,7 +339,7 @@ function App() {
               </div>
               
               {/* Gesture Display - Takes 1/3 width */}
-              <div className="xl:col-span-1">
+              <div className="lg:col-span-1">
                 <GestureDisplay currentGesture={currentGesture} />
               </div>
             </div>
