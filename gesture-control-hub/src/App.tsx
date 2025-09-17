@@ -185,48 +185,70 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
-      <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg">
-        <div className="container mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* Modern Header with Glass Effect */}
+      <header className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white shadow-2xl relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-black/10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='nonzero'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}></div>
+        </div>
+        
+        <div className="container mx-auto px-6 py-6 relative z-10">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <svg className="h-8 w-8 mr-3 animate-pulse" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
-              </svg>
-              <h1 className="text-2xl font-bold tracking-wide">Gesture-Controlled Smart Home Hub</h1>
+            <div className="flex items-center group">
+              {/* Enhanced Logo */}
+              <div className="relative mr-4">
+                <div className="absolute inset-0 bg-white/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+                <svg className="h-12 w-12 relative z-10 text-white drop-shadow-lg group-hover:scale-110 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                  SmartGesture Hub
+                </h1>
+                <p className="text-blue-100 text-sm font-medium opacity-90">AI-Powered Home Automation</p>
+              </div>
             </div>
             
-            {/* ML Model Status */}
+            {/* Enhanced ML Status */}
             {datasetInfo && (
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${datasetInfo.modelExists ? 'bg-green-400' : 'bg-orange-400'}`}></div>
-                  <span>ML Model: {datasetInfo.modelExists ? 'Trained' : 'Not Trained'}</span>
-                </div>
-                {datasetInfo.totalSamples > 0 && (
-                  <div className="text-xs opacity-80">
-                    {datasetInfo.totalSamples} samples | {datasetInfo.gestureCount} gestures
+              <div className="hidden md:flex items-center space-x-6">
+                <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                  <div className={`w-3 h-3 rounded-full ${datasetInfo.modelExists ? 'bg-green-400 animate-pulse' : 'bg-amber-400'} shadow-lg`}></div>
+                  <div>
+                    <div className="text-sm font-semibold">
+                      {datasetInfo.modelExists ? '🤖 AI Model Active' : '⚠️ Training Required'}
+                    </div>
+                    {datasetInfo.totalSamples > 0 && (
+                      <div className="text-xs text-blue-200">
+                        {datasetInfo.totalSamples} samples • {datasetInfo.gestureCount} gestures
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             )}
           </div>
           
-          {/* Tab Navigation */}
-          <nav className="mt-4">
-            <div className="flex space-x-1">
+          {/* Enhanced Tab Navigation */}
+          <nav className="mt-6">
+            <div className="flex space-x-2 bg-white/10 backdrop-blur-sm rounded-2xl p-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
                     activeTab === tab.id
-                      ? 'bg-white text-indigo-700 shadow-md'
-                      : 'text-blue-100 hover:text-white hover:bg-blue-500/20'
+                      ? 'bg-white text-indigo-700 shadow-lg shadow-white/25'
+                      : 'text-blue-100 hover:text-white hover:bg-white/20'
                   }`}
                 >
-                  <span className="mr-2">{tab.icon}</span>
-                  {tab.label}
+                  <span className="text-lg mr-3">{tab.icon}</span>
+                  <span className="hidden sm:inline">{tab.label.split(' ').slice(1).join(' ')}</span>
+                  <span className="sm:hidden">{tab.icon}</span>
                 </button>
               ))}
             </div>
@@ -234,31 +256,58 @@ function App() {
         </div>
       </header>
       
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-12">
         {/* Device Control Tab */}
         {activeTab === 'control' && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-              {/* Camera and Gesture Detection */}
-              <div className="md:col-span-8 transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
-                <div className="bg-white p-4 rounded-xl shadow-md">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-indigo-700">Camera Feed</h2>
+          <div className="space-y-12">
+            {/* Hero Section */}
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Control Your Smart Home
+              </h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Use hand gestures to seamlessly control your smart devices. Wave your hand, and watch your home respond!
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Enhanced Camera Section */}
+              <div className="lg:col-span-8">
+                <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-500">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800">Live Camera Feed</h3>
+                        <p className="text-gray-600">Real-time gesture recognition</p>
+                      </div>
+                    </div>
+                    
+                    {/* Enhanced ML Toggle */}
                     {datasetInfo?.modelExists && (
-                      <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700">Use ML Model:</label>
+                      <div className="flex items-center space-x-3 bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl px-4 py-2">
+                        <label className="text-sm font-semibold text-gray-700">AI Mode</label>
                         <button
                           onClick={() => setUseMLModel(!useMLModel)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            useMLModel ? 'bg-green-500' : 'bg-gray-300'
+                          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 transform hover:scale-105 ${
+                            useMLModel ? 'bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/25' : 'bg-gray-300'
                           }`}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 shadow-lg ${
                               useMLModel ? 'translate-x-6' : 'translate-x-1'
                             }`}
                           />
                         </button>
+                        <span className={`text-xs font-medium ${
+                          useMLModel ? 'text-green-600' : 'text-gray-500'
+                        }`}>
+                          {useMLModel ? 'ON' : 'OFF'}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -268,27 +317,42 @@ function App() {
                   />
                 </div>
               </div>
-              <div className="md:col-span-4 transition-all duration-300 hover:shadow-xl rounded-xl">
+              
+              {/* Enhanced Gesture Display */}
+              <div className="lg:col-span-4">
                 <GestureDisplay currentGesture={currentGesture} />
               </div>
             </div>
             
-            {/* Device Control Section */}
-            <div>
-              <div className="flex items-center mb-6">
-                <h2 className="text-2xl font-bold text-indigo-700">Device Controls</h2>
-                <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-indigo-500 to-transparent rounded-full"></div>
+            {/* Enhanced Device Control Section */}
+            <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold text-gray-800 mb-2">Smart Device Dashboard</h3>
+                <p className="text-gray-600">Monitor and control all your connected devices</p>
+                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
               </div>
               
               {loading ? (
-                <div className="flex justify-center items-center h-40">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-                  <p className="ml-4 text-lg text-gray-600">Loading your smart home...</p>
+                <div className="flex flex-col justify-center items-center h-64">
+                  <div className="relative">
+                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent absolute inset-0"></div>
+                  </div>
+                  <p className="mt-6 text-xl text-gray-600 font-medium">Connecting to your smart home...</p>
+                  <div className="mt-2 flex space-x-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {devices.map(device => (
-                    <div key={device.id} className="transform transition-all duration-300 hover:scale-105">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {devices.map((device, index) => (
+                    <div 
+                      key={device.id} 
+                      className="transform transition-all duration-500 hover:scale-105 hover:-translate-y-2"
+                      style={{animationDelay: `${index * 0.1}s`}}
+                    >
                       <DeviceCard
                         type={device.type}
                         name={device.name}
@@ -343,15 +407,118 @@ function App() {
         )}
       </main>
       
-      <footer className="mt-20 mb-8 text-center">
-        <div className="h-px w-1/3 mx-auto bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-        <div className="mt-6">
-          <p className="text-gray-500">
-            Gesture-Controlled Smart Home Hub © {new Date().getFullYear()}
-          </p>
-          <p className="text-indigo-400 text-sm mt-2">
-            Control your home with the power of AI and machine learning
-          </p>
+      {/* Enhanced Footer */}
+      <footer className="mt-24 bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white">
+        <div className="container mx-auto px-6 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Brand Section */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold">SmartGesture Hub</h3>
+              </div>
+              <p className="text-blue-200 leading-relaxed">
+                Experience the future of home automation with AI-powered gesture recognition. 
+                Control your smart devices with simple hand movements.
+              </p>
+              <div className="flex space-x-4">
+                <div className="flex items-center space-x-2 text-sm text-blue-300">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span>Real-time Detection</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-blue-300">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                  <span>ML Powered</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Features Section */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-blue-300">Key Features</h4>
+              <ul className="space-y-2 text-blue-200">
+                <li className="flex items-center space-x-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Real-time gesture recognition</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Custom gesture training</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Smart device integration</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span className="text-green-400">✓</span>
+                  <span>AI-powered accuracy</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Intuitive web interface</span>
+                </li>
+              </ul>
+            </div>
+            
+            {/* Stats Section */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-blue-300">System Status</h4>
+              <div className="space-y-3">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-200">Model Status</span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      datasetInfo?.modelExists 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-orange-500 text-white'
+                    }`}>
+                      {datasetInfo?.modelExists ? 'Trained' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                
+                {datasetInfo && (
+                  <>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-blue-200">Gestures</span>
+                        <span className="text-white font-semibold">{datasetInfo.gestureCount}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-blue-200">Training Samples</span>
+                        <span className="text-white font-semibold">{datasetInfo.totalSamples}</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom Section */}
+          <div className="border-t border-white/20 mt-8 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <div className="text-blue-200">
+                <p>&copy; {new Date().getFullYear()} SmartGesture Hub. Powered by AI & Machine Learning.</p>
+              </div>
+              <div className="flex items-center space-x-6 text-blue-300">
+                <span className="text-sm">Built with</span>
+                <div className="flex space-x-3">
+                  <span className="px-2 py-1 bg-blue-500/20 rounded text-xs">React</span>
+                  <span className="px-2 py-1 bg-green-500/20 rounded text-xs">Flask</span>
+                  <span className="px-2 py-1 bg-purple-500/20 rounded text-xs">MediaPipe</span>
+                  <span className="px-2 py-1 bg-orange-500/20 rounded text-xs">ML</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
