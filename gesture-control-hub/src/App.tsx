@@ -256,102 +256,100 @@ function App() {
         </div>
       </header>
       
-      <main className="container mx-auto px-6 py-12">
+      <main className="container mx-auto px-4 py-8">
         {/* Device Control Tab */}
         {activeTab === 'control' && (
-          <div className="space-y-12">
-            {/* Hero Section */}
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="space-y-8">
+            {/* Hero Section - Simplified */}
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-800 mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Control Your Smart Home
               </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Use hand gestures to seamlessly control your smart devices. Wave your hand, and watch your home respond!
+              <p className="text-gray-600 max-w-xl mx-auto">
+                Use hand gestures to seamlessly control your smart devices
               </p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              {/* Enhanced Camera Section */}
-              <div className="lg:col-span-8">
-                <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-500">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
-                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
+            {/* Main Content Layout - Better Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+              {/* Camera Feed - Takes 2/3 width on large screens */}
+              <div className="xl:col-span-3">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                  {/* Camera Header - Simplified */}
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800">Live Camera Feed</h3>
+                          <p className="text-sm text-gray-600">Real-time gesture recognition</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-800">Live Camera Feed</h3>
-                        <p className="text-gray-600">Real-time gesture recognition</p>
-                      </div>
-                    </div>
-                    
-                    {/* Enhanced ML Toggle */}
-                    {datasetInfo?.modelExists && (
-                      <div className="flex items-center space-x-3 bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl px-4 py-2">
-                        <label className="text-sm font-semibold text-gray-700">AI Mode</label>
-                        <button
-                          onClick={() => setUseMLModel(!useMLModel)}
-                          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 transform hover:scale-105 ${
-                            useMLModel ? 'bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/25' : 'bg-gray-300'
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300 shadow-lg ${
-                              useMLModel ? 'translate-x-6' : 'translate-x-1'
+                      
+                      {/* Simplified ML Toggle */}
+                      {datasetInfo?.modelExists && (
+                        <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-sm">
+                          <span className="text-sm font-medium text-gray-700">AI Mode</span>
+                          <button
+                            onClick={() => setUseMLModel(!useMLModel)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                              useMLModel ? 'bg-green-500' : 'bg-gray-300'
                             }`}
-                          />
-                        </button>
-                        <span className={`text-xs font-medium ${
-                          useMLModel ? 'text-green-600' : 'text-gray-500'
-                        }`}>
-                          {useMLModel ? 'ON' : 'OFF'}
-                        </span>
-                      </div>
-                    )}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                useMLModel ? 'translate-x-6' : 'translate-x-1'
+                              }`}
+                            />
+                          </button>
+                          <span className={`text-xs font-medium ${
+                            useMLModel ? 'text-green-600' : 'text-gray-500'
+                          }`}>
+                            {useMLModel ? 'ON' : 'OFF'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <CameraFeed 
-                    onGestureDetected={handleGestureDetected}
-                    useMLModel={useMLModel && datasetInfo?.modelExists}
-                  />
+                  
+                  {/* Camera Feed Content */}
+                  <div className="p-6">
+                    <CameraFeed 
+                      onGestureDetected={handleGestureDetected}
+                      useMLModel={useMLModel && datasetInfo?.modelExists}
+                    />
+                  </div>
                 </div>
               </div>
               
-              {/* Enhanced Gesture Display */}
-              <div className="lg:col-span-4">
+              {/* Gesture Display - Takes 1/3 width */}
+              <div className="xl:col-span-1">
                 <GestureDisplay currentGesture={currentGesture} />
               </div>
             </div>
             
-            {/* Enhanced Device Control Section */}
-            <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
-              <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold text-gray-800 mb-2">Smart Device Dashboard</h3>
+            {/* Device Control Section - Simplified */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Smart Device Dashboard</h3>
                 <p className="text-gray-600">Monitor and control all your connected devices</p>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-4"></div>
               </div>
               
               {loading ? (
-                <div className="flex flex-col justify-center items-center h-64">
-                  <div className="relative">
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200"></div>
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent absolute inset-0"></div>
-                  </div>
-                  <p className="mt-6 text-xl text-gray-600 font-medium">Connecting to your smart home...</p>
-                  <div className="mt-2 flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                  </div>
+                <div className="flex flex-col justify-center items-center h-48">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+                  <p className="mt-4 text-gray-600">Connecting to your smart home...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {devices.map((device, index) => (
                     <div 
                       key={device.id} 
-                      className="transform transition-all duration-500 hover:scale-105 hover:-translate-y-2"
-                      style={{animationDelay: `${index * 0.1}s`}}
+                      className="transform transition-all duration-300 hover:scale-105"
                     >
                       <DeviceCard
                         type={device.type}
