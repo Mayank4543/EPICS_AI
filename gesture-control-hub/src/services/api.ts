@@ -50,6 +50,74 @@ export interface GestureDetectionResponse {
   };
 }
 
+// Types for ML endpoints
+export interface RecordGestureRequest {
+  gesture_name: string;
+  image: string; // base64 encoded image
+}
+
+export interface RecordGestureResponse {
+  success: boolean;
+  message: string;
+  gesture_name: string;
+  handsDetected: number;
+  landmarksSaved: boolean;
+  dataset: {
+    totalSamples: number;
+    gestures: Record<string, number>;
+  };
+  timestamp: string;
+}
+
+export interface TrainModelResponse {
+  success: boolean;
+  message: string;
+  accuracy?: number;
+  totalSamples?: number;
+  gestureCount?: number;
+  gestures?: Record<string, number>;
+  trainingSamples?: number;
+  testingSamples?: number;
+  timestamp: string;
+  modelPath?: string;
+}
+
+export interface DetectTrainedGestureResponse {
+  success: boolean;
+  predicted_gesture: string | null;
+  confidence: number;
+  all_probabilities: Record<string, number>;
+  handsDetected: number;
+  handedness: string;
+  message?: string;
+  timestamp: string;
+}
+
+export interface DatasetInfoResponse {
+  exists: boolean;
+  totalSamples: number;
+  gestureCount: number;
+  gestures: Record<string, number>;
+  filePath?: string;
+  modelExists: boolean;
+  modelPath?: string | null;
+  message?: string;
+  timestamp: string;
+}
+
+export interface ModelInfoResponse {
+  modelLoaded: boolean;
+  modelType: string;
+  version: string;
+  description: string;
+  maxHands: number;
+  landmarks: number;
+  inputFormat: string;
+  maxImageSize: string;
+  detectionConfidence: number;
+  trackingConfidence: number;
+}
+
 export interface GestureDetectionRequest {
   image: string; // base64 encoded image
 }
@@ -161,6 +229,90 @@ const api = {
   // Get video feed URL
   getVideoFeedUrl: (): string => {
     return `${API_BASE_URL}/video_feed`;
+  },
+
+  // === NEW ML ENDPOINTS ===
+
+  // Record gesture for training
+  recordGesture: async (gestureName: string, imageData: string): Promise<RecordGestureResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/record-gesture`, {
+        gesture_name: gestureName,
+        image: imageData
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 15000, // 15 second timeout for processing
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error recording gesture:', error);
+      throw error;
+    }
+  },
+
+  // Train the ML model
+  trainModel: async (): Promise<TrainModelResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/train`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 30000, // 30 second timeout for training
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error training model:', error);
+      throw error;
+    }
+  },
+
+  // Detect gesture using trained ML model
+  detectTrainedGesture: async (imageData: string): Promise<DetectTrainedGestureResponse> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/detect`, {
+        image: imageData
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000, // 10 second timeout
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error detecting trained gesture:', error);
+      throw error;
+    }
+  },
+
+  // Get dataset information
+  getDatasetInfo: async (): Promise<DatasetInfoResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/dataset-info`, {
+        timeout: 5000,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error getting dataset info:', error);
+      throw error;
+    }
+  },
+
+  // Get detailed model information
+  getDetailedModelInfo: async (): Promise<ModelInfoResponse> => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/model-info`, {
+        timeout: 5000,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error getting detailed model info:', error);
+      throw error;
+    }
   }
 };
 

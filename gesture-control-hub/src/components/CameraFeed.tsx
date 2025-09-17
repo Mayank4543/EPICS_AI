@@ -4,9 +4,10 @@ import api, { GestureDetectionResponse } from '../services/api';
 
 interface CameraFeedProps {
   onGestureDetected?: (gesture: string) => void;
+  useMLModel?: boolean;
 }
 
-const CameraFeed: React.FC<CameraFeedProps> = ({ onGestureDetected }) => {
+const CameraFeed: React.FC<CameraFeedProps> = ({ onGestureDetected, useMLModel = false }) => {
   const webcamRef = useRef<Webcam>(null);
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
   const [isCameraEnabled, setIsCameraEnabled] = useState<boolean>(true);
@@ -89,19 +90,47 @@ const CameraFeed: React.FC<CameraFeedProps> = ({ onGestureDetected }) => {
       }
 
       // Send to backend for gesture detection
-      const response = await api.detectGesture(imageSrc);
-      setLastDetection(response);
+      let gesture = '';
+      
+      if (useMLModel) {
+        try {
+          // Use trained ML model for detection
+          const mlResponse = await api.detectTrainedGesture(imageSrc);
+          setLastDetection({
+            success: mlResponse.success,
+            handsDetected: mlResponse.handsDetected,
+            predictions: [], // ML response has different structure
+            timestamp: mlResponse.timestamp
+          });
 
-      // Process detected gestures
-      if (response.success && response.handsDetected > 0) {
-        // Convert hand landmarks to gesture commands
-        const gesture = analyzeGestureFromLandmarks(response.predictions[0]);
-        if (gesture && onGestureDetected) {
-          onGestureDetected(gesture);
+          if (mlResponse.success && mlResponse.predicted_gesture) {
+            gesture = mlResponse.predicted_gesture;
+            console.log(`ML Model detected: ${gesture} (confidence: ${mlResponse.confidence})`);
+          }
+        } catch (mlError) {
+          console.warn('ML detection failed, falling back to landmark analysis:', mlError);
+          // Fall back to landmark analysis
+          const response = await api.detectGesture(imageSrc);
+          setLastDetection(response);
+
+          if (response.success && response.handsDetected > 0) {
+            gesture = analyzeGestureFromLandmarks(response.predictions[0]);
+          }
         }
-      } else if (onGestureDetected) {
-        // No hands detected, clear current gesture
-        onGestureDetected('');
+      } else {
+        // Use MediaPipe landmark detection and analysis
+        const response = await api.detectGesture(imageSrc);
+        setLastDetection(response);
+
+        // Process detected gestures using landmark analysis
+        if (response.success && response.handsDetected > 0) {
+          gesture = analyzeGestureFromLandmarks(response.predictions[0]);
+        }
+      }
+
+      // Send gesture to parent component
+      if (onGestureDetected) {
+        onGestureDetected(gesture);
       }
 
     } catch (err) {
@@ -110,7 +139,7 @@ const CameraFeed: React.FC<CameraFeedProps> = ({ onGestureDetected }) => {
     } finally {
       setIsDetecting(false);
     }
-  }, [isCameraActive, backendStatus, isDetecting, onGestureDetected]);
+  }, [isCameraActive, backendStatus, isDetecting, onGestureDetected, useMLModel]);
 
   // Analyze hand landmarks to determine gesture
   const analyzeGestureFromLandmarks = (hand: any): string => {
@@ -203,21 +232,33 @@ const CameraFeed: React.FC<CameraFeedProps> = ({ onGestureDetected }) => {
   }, [isCameraEnabled, onGestureDetected]);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+    // <div className="bg-white rounded-lg shadow-md p-4 mb-6">
       <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-3">
         <div>
           <h2 className="text-xl font-semibold">
             Real-Time Gesture Detection
           </h2>
-          <div className="flex items-center mt-1">
-            <div className={`w-2 h-2 rounded-full mr-2 ${
-              backendStatus === 'connected' ? 'bg-green-500' : 
-              backendStatus === 'disconnected' ? 'bg-red-500' : 'bg-yellow-500'
-            }`}></div>
-            <span className="text-sm text-gray-600">
-              Backend: {backendStatus === 'connected' ? 'Connected' : 
-                        backendStatus === 'disconnected' ? 'Disconnected' : 'Checking...'}
-            </span>
+          <div className="flex items-center mt-1 space-x-4">
+            <div className="flex items-center">
+              <div className={`w-2 h-2 rounded-full mr-2 ${
+                backendStatus === 'connected' ? 'bg-green-500' : 
+                backendStatus === 'disconnected' ? 'bg-red-500' : 'bg-yellow-500'
+              }`}></div>
+              <span className="text-sm text-gray-600">
+                Backend: {backendStatus === 'connected' ? 'Connected' : 
+                          backendStatus === 'disconnected' ? 'Disconnected' : 'Checking...'}
+              </span>
+            </div>
+            
+            {backendStatus === 'connected' && (
+              <div className="flex items-center">
+                <div className={`w-2 h-2 rounded-full mr-2 ${useMLModel ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
+                <span className="text-sm text-gray-600">
+                  Mode: {useMLModel ? '🤖 ML Model' : '📍 Landmark Analysis'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex space-x-2">
