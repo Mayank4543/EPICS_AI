@@ -20,9 +20,9 @@ function App() {
 
   // Tab configuration
   const tabs = [
-    { id: 'control', label: '🏠 Device Control', icon: '🏠' },
-    { id: 'record', label: '📹 Record Gestures', icon: '📹' },
-    { id: 'train', label: '🤖 Train Model', icon: '🤖' }
+    { id: 'control', label: ' Device Control', icon: '🏠' },
+    { id: 'record', label: ' Record Gestures', icon: '📹' },
+    { id: 'train', label: ' Train Model', icon: '🤖' }
   ];
 
   // Fetch initial device states and dataset info
@@ -33,7 +33,7 @@ function App() {
           api.getDeviceStates(),
           api.getDatasetInfo().catch(() => null)
         ]);
-        
+
         setDevices(deviceData.devices);
         if (datasetData) {
           setDatasetInfo(datasetData);
@@ -57,34 +57,21 @@ function App() {
         console.error('Failed to fetch device states:', error);
       }
     }, 10000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
   // Handle gesture detection
   const handleGestureDetected = (gesture: string) => {
+    console.log('App received gesture:', gesture);
     setCurrentGesture(gesture);
-    
-    // Process gesture and control devices
-    switch (gesture) {
-      case '✋': // Turn OFF all lights
-      case 'open_hand': // ML model name
-        handleTurnOffAllLights();
-        break;
-      case '👍': // Increase fan speed
-      case 'thumbs_up': // ML model name
-        handleIncreaseFanSpeed();
-        break;
-      case '👎': // Decrease fan speed
-      case 'thumbs_down': // ML model name
-        handleDecreaseFanSpeed();
-        break;
-      case '👉': // Toggle TV power
-      case 'index_finger': // ML model name
-        handleToggleTV();
-        break;
-      default:
-        break;
+
+    // If you want to handle specific gesture actions, you can do that here
+    // For now, we'll just log the detected gesture and let the display show it dynamically
+    if (gesture && gesture.trim() !== '') {
+      console.log(`Dynamic gesture detected: ${gesture}`);
+      // You can add specific device control logic here if needed
+      // handleDeviceControlForGesture(gesture);
     }
   };
 
@@ -120,9 +107,9 @@ function App() {
 
     try {
       await api.updateDevice(deviceId, { isOn: !device.isOn });
-      
+
       // Update local state
-      setDevices(devices.map(d => 
+      setDevices(devices.map(d =>
         d.id === deviceId ? { ...d, isOn: !d.isOn } : d
       ));
     } catch (error) {
@@ -133,9 +120,9 @@ function App() {
   const handleChangeFanSpeed = async (deviceId: string, level: number) => {
     try {
       await api.updateDevice(deviceId, { level });
-      
+
       // Update local state
-      setDevices(devices.map(d => 
+      setDevices(devices.map(d =>
         d.id === deviceId ? { ...d, level } : d
       ));
     } catch (error) {
@@ -146,7 +133,7 @@ function App() {
   // Gesture control functions
   const handleTurnOffAllLights = () => {
     const lightDevices = devices.filter(d => d.type === 'light' && d.isOn);
-    
+
     lightDevices.forEach(device => {
       handleToggleDevice(device.id);
     });
@@ -155,7 +142,7 @@ function App() {
   const handleIncreaseFanSpeed = () => {
     const fan = devices.find(d => d.type === 'fan');
     if (!fan) return;
-    
+
     if (!fan.isOn) {
       // Turn on the fan first
       handleToggleDevice(fan.id);
@@ -168,7 +155,7 @@ function App() {
   const handleDecreaseFanSpeed = () => {
     const fan = devices.find(d => d.type === 'fan');
     if (!fan || !fan.isOn || fan.level === undefined) return;
-    
+
     if (fan.level > 0) {
       handleChangeFanSpeed(fan.id, fan.level - 1);
     } else {
@@ -184,6 +171,22 @@ function App() {
     }
   };
 
+  // Additional gesture control functions for trained model
+  const handleTurnOnAllDevices = () => {
+    const offDevices = devices.filter(d => !d.isOn);
+    offDevices.forEach(device => {
+      handleToggleDevice(device.id);
+    });
+  };
+
+  const handleEmergencyStop = () => {
+    // Turn off all devices
+    const onDevices = devices.filter(d => d.isOn);
+    onDevices.forEach(device => {
+      handleToggleDevice(device.id);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Modern Header with Glass Effect */}
@@ -194,7 +197,7 @@ function App() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='nonzero'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
           }}></div>
         </div>
-        
+
         <div className="container mx-auto px-6 py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center group">
@@ -212,7 +215,7 @@ function App() {
                 <p className="text-blue-100 text-sm font-medium opacity-90">AI-Powered Home Automation</p>
               </div>
             </div>
-            
+
             {/* Enhanced ML Status */}
             {datasetInfo && (
               <div className="hidden md:flex items-center space-x-6">
@@ -232,7 +235,7 @@ function App() {
               </div>
             )}
           </div>
-          
+
           {/* Enhanced Tab Navigation */}
           <nav className="mt-6">
             <div className="flex space-x-2 bg-white/10 backdrop-blur-sm rounded-2xl p-2">
@@ -240,11 +243,10 @@ function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
-                    activeTab === tab.id
-                      ? 'bg-white text-indigo-700 shadow-lg shadow-white/25'
-                      : 'text-blue-100 hover:text-white hover:bg-white/20'
-                  }`}
+                  className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${activeTab === tab.id
+                    ? 'bg-white text-indigo-700 shadow-lg shadow-white/25'
+                    : 'text-blue-100 hover:text-white hover:bg-white/20'
+                    }`}
                 >
                   <span className="text-lg mr-3">{tab.icon}</span>
                   <span className="hidden sm:inline">{tab.label.split(' ').slice(1).join(' ')}</span>
@@ -255,7 +257,7 @@ function App() {
           </nav>
         </div>
       </header>
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Device Control Tab */}
         {activeTab === 'control' && (
@@ -269,7 +271,7 @@ function App() {
                 Use hand gestures to seamlessly control your smart devices
               </p>
             </div>
-            
+
             {/* Main Content Layout - Improved Camera Focus */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Camera Feed - Takes 2/3 width on large screens */}
@@ -281,7 +283,7 @@ function App() {
                     <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm border ${
                       /* We'll get this from CameraFeed component status */
                       'bg-green-100/90 text-green-800 border-green-200'
-                    }`}>
+                      }`}>
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span>Backend Connected</span>
                     </div>
@@ -292,21 +294,18 @@ function App() {
                         <span className="text-xs font-medium text-gray-700">AI Mode</span>
                         <button
                           onClick={() => setUseMLModel(!useMLModel)}
-                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                            useMLModel 
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 focus:ring-blue-500' 
-                              : 'bg-gray-300 focus:ring-gray-300'
-                          }`}
+                          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${useMLModel
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-500 focus:ring-blue-500'
+                            : 'bg-gray-300 focus:ring-gray-300'
+                            }`}
                         >
                           <span
-                            className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                              useMLModel ? 'translate-x-5' : 'translate-x-1'
-                            }`}
+                            className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${useMLModel ? 'translate-x-5' : 'translate-x-1'
+                              }`}
                           />
                         </button>
-                        <span className={`text-xs font-medium ${
-                          useMLModel ? 'text-blue-600' : 'text-gray-500'
-                        }`}>
+                        <span className={`text-xs font-medium ${useMLModel ? 'text-blue-600' : 'text-gray-500'
+                          }`}>
                           {useMLModel ? 'ON' : 'OFF'}
                         </span>
                       </div>
@@ -327,30 +326,33 @@ function App() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Camera Feed Content */}
                   <div className="p-8">
-                    <CameraFeed 
+                    <CameraFeed
                       onGestureDetected={handleGestureDetected}
                       useMLModel={useMLModel && datasetInfo?.modelExists}
                     />
                   </div>
                 </div>
               </div>
-              
+
               {/* Gesture Display - Takes 1/3 width */}
               <div className="lg:col-span-1">
-                <GestureDisplay currentGesture={currentGesture} />
+                <GestureDisplay
+                  currentGesture={currentGesture}
+                  onGestureDetected={handleGestureDetected}
+                />
               </div>
             </div>
-            
+
             {/* Device Control Section - Simplified */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Smart Device Dashboard</h3>
                 <p className="text-gray-600">Monitor and control all your connected devices</p>
               </div>
-              
+
               {loading ? (
                 <div className="flex flex-col justify-center items-center h-48">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
@@ -359,8 +361,8 @@ function App() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {devices.map((device, index) => (
-                    <div 
-                      key={device.id} 
+                    <div
+                      key={device.id}
                       className="transform transition-all duration-300 hover:scale-105"
                     >
                       <DeviceCard
@@ -370,8 +372,8 @@ function App() {
                         level={device.level}
                         onToggle={() => handleToggleDevice(device.id)}
                         onLevelChange={
-                          device.type === 'fan' 
-                            ? (level) => handleChangeFanSpeed(device.id, level) 
+                          device.type === 'fan'
+                            ? (level) => handleChangeFanSpeed(device.id, level)
                             : undefined
                         }
                       />
@@ -389,11 +391,11 @@ function App() {
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-800 mb-2">🎯 Record Training Data</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Record multiple samples of different hand gestures to train your custom ML model. 
+                Record multiple samples of different hand gestures to train your custom ML model.
                 The more samples you record, the better your model will perform!
               </p>
             </div>
-            
+
             <GestureRecorder
               onRecordingComplete={handleRecordingComplete}
               onDatasetUpdate={setDatasetInfo}
@@ -407,16 +409,16 @@ function App() {
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-800 mb-2">🤖 Train Your Model</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Train a RandomForest classifier on your recorded gesture data. 
+                Train a RandomForest classifier on your recorded gesture data.
                 Once trained, you can use the model for real-time gesture recognition!
               </p>
             </div>
-            
+
             <ModelTrainer onTrainingComplete={handleTrainingComplete} />
           </div>
         )}
       </main>
-      
+
       {/* Enhanced Footer */}
       <footer className="mt-24 bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white">
         <div className="container mx-auto px-6 py-12">
@@ -432,7 +434,7 @@ function App() {
                 <h3 className="text-xl font-bold">SmartGesture Hub</h3>
               </div>
               <p className="text-blue-200 leading-relaxed">
-                Experience the future of home automation with AI-powered gesture recognition. 
+                Experience the future of home automation with AI-powered gesture recognition.
                 Control your smart devices with simple hand movements.
               </p>
               <div className="flex space-x-4">
@@ -446,7 +448,7 @@ function App() {
                 </div>
               </div>
             </div>
-            
+
             {/* Features Section */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-blue-300">Key Features</h4>
@@ -473,7 +475,7 @@ function App() {
                 </li>
               </ul>
             </div>
-            
+
             {/* Stats Section */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-blue-300">System Status</h4>
@@ -481,16 +483,15 @@ function App() {
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                   <div className="flex justify-between items-center">
                     <span className="text-blue-200">Model Status</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      datasetInfo?.modelExists 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-orange-500 text-white'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${datasetInfo?.modelExists
+                      ? 'bg-green-500 text-white'
+                      : 'bg-orange-500 text-white'
+                      }`}>
                       {datasetInfo?.modelExists ? 'Trained' : 'Pending'}
                     </span>
                   </div>
                 </div>
-                
+
                 {datasetInfo && (
                   <>
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
@@ -499,7 +500,7 @@ function App() {
                         <span className="text-white font-semibold">{datasetInfo.gestureCount}</span>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                       <div className="flex justify-between items-center">
                         <span className="text-blue-200">Training Samples</span>
@@ -511,7 +512,7 @@ function App() {
               </div>
             </div>
           </div>
-          
+
           {/* Bottom Section */}
           <div className="border-t border-white/20 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
